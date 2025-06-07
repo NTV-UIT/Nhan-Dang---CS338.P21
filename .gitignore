@@ -1,0 +1,51 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/my-app/node_modules
+/my-app/.pnp
+/my-app/.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pretrained models
+/backend/app/pretrained_models/
+/backend/pretrained_models/
+**/pretrained_models/
+**/*.pt
+**/*.pth
+**/*.pkl
+**/*.ckpt
+**/*.weights
+**/*.bin
+**/*.onnx
+**/*.h5
+**/*.hdf5
+**/*.model
+**/*.joblib
+**/*.npy
+**/*.npz
+**/*.tar
+**/*.gz
+**/*.zip
+**/*.rar
+**/*.7z

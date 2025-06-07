@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+typing-extensions
+gdown
+tqdm
+matplotlib
+opencv-python
+imageio
+git+https://github.com/openai/CLIP.git
