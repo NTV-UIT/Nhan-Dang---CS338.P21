@@ -3,7 +3,6 @@
 ### Yêu cầu hệ thống
 - Đã cài đặt Anaconda hoặc Miniconda
 - GPU NVIDIA hỗ trợ CUDA (cho phiên bản PyTorch CUDA)
-- 
 
 ### Các bước cài đặt
 
