@@ -52,3 +52,4 @@ sudo update-alternatives --install /usr/bin/ninja ninja /usr/local/bin/ninja 1 -
 sudo pip install cmake
 sudo pip install dlib
 ```
+- If u get error try [this](https://github.com/z-mahmud22/Dlib_Windows_Python3.x)
