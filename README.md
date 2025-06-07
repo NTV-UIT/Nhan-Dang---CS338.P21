@@ -3,6 +3,7 @@
 ### Yêu cầu hệ thống
 - Đã cài đặt Anaconda hoặc Miniconda
 - GPU NVIDIA hỗ trợ CUDA (cho phiên bản PyTorch CUDA)
+- 
 
 ### Các bước cài đặt
 
@@ -11,10 +12,14 @@
 conda create -n styleclip python=3.10
 conda activate styleclip
 ```
-
-2. Cài đặt PyTorch với hỗ trợ CUDA 11.8:
+2. Cài đặt PyTorch với hỗ trợ CUDA:
+- Check cuda toolkit version:
 ```bash
-python3.10 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+nvcc --version
+```
+- Dựa vào cuda toolkit version (ví dụ: 12.8), ta cài tương ứng bản Pytorch:
+```bash
+python3.10 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu12.8
 ```
 
 3. Cài đặt TensorFlow:
