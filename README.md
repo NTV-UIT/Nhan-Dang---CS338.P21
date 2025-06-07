@@ -36,3 +36,10 @@ python -c "import torch; print('CUDA available:', torch.cuda.is_available()); pr
 ```python
 python -c "import tensorflow as tf; print('GPU available:', tf.config.list_physical_devices('GPU')); print('TensorFlow version:', tf.__version__)"
 ```
+
+7. Install ninja:
+```python
+wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
+sudo unzip ninja-linux.zip -d /usr/local/bin/
+sudo update-alternatives --install /usr/bin/ninja ninja /usr/local/bin/ninja 1 --force
+```
