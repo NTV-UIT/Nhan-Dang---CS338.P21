@@ -1,26 +1,40 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-# from app.apis.latent_optimization_router import router as latent_optimization_router
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from apis.mapper_router import router as mapper_router
-# from app.apis.global_direction_router import router as global_direction_router
+import os
+
+# Create necessary directories
+os.makedirs("templates", exist_ok=True)
+os.makedirs("static", exist_ok=True)
 
 app = FastAPI() 
 
+# Add CORS middleware with all origins allowed
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    # allow_origins=["*"],  # Allow all origins
+    allow_origins=["http://127.0.0.1:5500"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+    expose_headers=["*"]  # Expose all headers
 )
 
-# app.include_router(latent_optimization_router)
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Include router
 app.include_router(mapper_router)
-# app.include_router(global_direction_router)
 
 @app.get("/")
 async def root():
-    return {"message": "Xin chao"}
+    return FileResponse("templates/index.html")
+
+@app.get("/test")
+async def test():
+    return {"status": "ok", "message": "Server is running"}
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapper Upload</title>
+</head>
+<body>
+  <h1>Upload Image to Mapper</h1>
+  <input type="file" id="imageInput" accept="image/*">
+  <button onclick="sendToMapper()">Submit</button>
+
+  <div id="response"></div>
+
+  <script>
+    async function sendToMapper() {
+      const input = document.getElementById('imageInput');
+      const responseDiv = document.getElementById('response');
+      responseDiv.innerHTML = '';
+
+      if (!input.files.length) {
+        alert("Please select a file.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", input.files[0]);
+
+      try {
+        const response = await fetch("http://localhost:8003/mapper/", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("HTTP status " + response.status);
+        }
+
+        const data = await response.json();
+        responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+      } catch (err) {
+        console.error("Request failed:", err);
+        responseDiv.innerHTML = '<span style="color:red;">Request failed: ' + err.message + '</span>';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -10,7 +10,7 @@ class TestOptions:
 	def initialize(self):
 		# arguments for inference script
 		self.parser.add_argument('--exp_dir', type=str, help='Path to experiment output directory')
-		self.parser.add_argument('--checkpoint_path', default="../pretrained_models/surprised.pt", type=str, help='Path to model checkpoint')
+		# self.parser.add_argument('--checkpoint_path', default="../pretrained_models/surprised.pt", type=str, help='Path to model checkpoint')
 		self.parser.add_argument('--couple_outputs', action='store_true', help='Whether to also save inputs + outputs side-by-side')
 
 		self.parser.add_argument('--mapper_type', default='LevelsMapper', type=str, help='Which mapper to use')
@@ -26,7 +26,7 @@ class TestOptions:
 		self.parser.add_argument('--work_in_stylespace', default=False, action='store_true')
 
 		self.parser.add_argument('--n_images', type=int, default=None, help='Number of images to output. If None, run on all data')
-		self.parser.add_argument('--ckpt_e4e', default="../pretrained_models/e4e_ffhq_encode.pt", type=str, help='Path to e4e checkpoint')
+		# self.parser.add_argument('--ckpt_e4e', default="../pretrained_models/e4e_ffhq_encode.pt", type=str, help='Path to e4e checkpoint')
 		self.parser.add_argument('--device', default='cuda:0', type=str, help='Device to use')
 		self.parser.add_argument("--align", action="store_true", help="align face images before inference")
 		self.parser.add_argument('--image_path', default=None, type=str, help='Path to image')

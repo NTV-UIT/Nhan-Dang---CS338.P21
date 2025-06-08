@@ -101,8 +101,9 @@ def setup_e4e(ckpt, device):
     generator.eval()
     return net, opts, generator
 
-def inversion(ckpt=None, device='cuda', align=False, image_path=None):
-    net, opts, generator = setup_e4e(ckpt, device)
+def inversion(test_opts, device='cuda', align=False, image_path=None):
+    # net, opts, generator = setup_e4e(ckpt, device)
+    net, opts, generator = test_opts.net_e4e, test_opts.opts_e4e, test_opts.generator_e4e
     is_cars = 'cars_' in opts.dataset_type
     image = setup_data_loader(align, image_path, opts)
     latent_codes = get_all_latents(net, image, is_cars=is_cars, device=device)
@@ -125,10 +126,11 @@ def run(test_opts):
     out_path_results = os.path.join(test_opts.exp_dir, 'inference_results')
     os.makedirs(out_path_results, exist_ok=True)
 
-    net, opts = setup_mapper(test_opts)
+    # net, opts = setup_mapper(test_opts)
+    net, opts = test_opts.mapper_net, test_opts.mapper_opts
 
     # test_latents = torch.load(opts.latents_test_path)
-    test_latents = inversion(ckpt=test_opts.ckpt_e4e, device=test_opts.device, align=test_opts.align, image_path=test_opts.image_path)
+    test_latents = inversion(test_opts, device=test_opts.device, align=test_opts.align, image_path=test_opts.image_path)
     
     print(f"test_latents: {test_latents.shape}")
     if opts.work_in_stylespace:
