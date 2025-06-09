@@ -61,3 +61,9 @@ sudo pip install cmake
 sudo pip install dlib
 ```
 - If u get error try [this](https://github.com/z-mahmud22/Dlib_Windows_Python3.x)
+
+# Cách chạy Fastapi:
+```bash
+cd Nhan-Dang---CS338.P21/app
+uvicorn main:app --reload --port 8001
+```
