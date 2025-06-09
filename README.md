@@ -4,7 +4,7 @@
 - Đã cài đặt Anaconda hoặc Miniconda
 - GPU NVIDIA hỗ trợ CUDA (cho phiên bản PyTorch CUDA)
 - Python >= 3.9
-- 
+  
 ### Cài đặt checkpoints:
 ```bash
 cd Nhan-Dang---CS338.P21/app
