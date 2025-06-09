@@ -4,6 +4,14 @@
 - Đã cài đặt Anaconda hoặc Miniconda
 - GPU NVIDIA hỗ trợ CUDA (cho phiên bản PyTorch CUDA)
 - Python >= 3.9
+- 
+### Cài đặt checkpoints:
+```bash
+cd Nhan-Dang---CS338.P21/app
+mkdir pretrained_models
+./down_ckp.sh
+```
+
 ### Các bước cài đặt
 
 1. Tạo và kích hoạt môi trường conda mới:
