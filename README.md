@@ -4,6 +4,14 @@
 - Đã cài đặt Anaconda hoặc Miniconda
 - GPU NVIDIA hỗ trợ CUDA (cho phiên bản PyTorch CUDA)
 - Python >= 3.9
+  
+### Cài đặt checkpoints:
+```bash
+cd Nhan-Dang---CS338.P21/backend/app
+mkdir pretrained_models
+./down_ckp.sh
+```
+
 ### Các bước cài đặt
 
 1. Tạo và kích hoạt môi trường conda mới:
@@ -59,4 +67,9 @@ python -m pip install cmake dlib
 python -m pip install --upgrade pip
 python -m pip install --force-reinstall --upgrade uvicorn
 python -m uvicorn main:app --reload --port 8000
+```
+### Cách chạy Fastapi:
+```bash
+cd Nhan-Dang---CS338.P21/backend/app
+uvicorn main:app --reload --port 8001
 ```
