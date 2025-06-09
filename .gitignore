@@ -1,17 +1,18 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/my-app/node_modules
-/my-app/.pnp
-/my-app/.pnp.js
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
 
-# testing
-/coverage
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
 
-# production
-/build
-
-# Build, dist, and packaging
+# Python packaging
 build/
 dist/
 .eggs/
@@ -40,65 +41,29 @@ coverage.xml
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# pyenv
-.python-version
-
-# mypy
+# mypy, Pyre
 .mypy_cache/
 .dmypy.json
-
-# Pyre type checker
 .pyre/
 
 # VS Code
 .vscode/
 
-# Python virtual environments
-.env
-.venv
-env/
-venv/
-ENV/
-
-# Mac
+# Mac & System
 .DS_Store
-
-# System
 Thumbs.db
 
 # Log files
 *.log
-
-# Compiled CUDA
-*.cu.o
-*.ptx
-
-# Ninja build
-ninja-linux.zip
-
-# Results
-results/
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Pretrained models
+# Pretrained models & large data
 /backend/app/pretrained_models/
 /backend/pretrained_models/
 **/pretrained_models/
+pretrained_models/
 **/*.pt
 **/*.pth
 **/*.pkl
@@ -118,5 +83,31 @@ __pycache__/
 **/*.rar
 **/*.7z
 
-# React build
+# Results, outputs
+results/
+**/results/
+
+# React (frontend)
+my-app/node_modules/
 my-app/build/
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Misc
+ninja-linux.zip
+cuda_*.run
+
+# Ignore backend/__pycache__
+backend/app/__pycache__/
+backend/app/apis/__pycache__/
+backend/app/encoder4editing/configs/__pycache__/
+backend/app/encoder4editing/models/__pycache__/
+backend/app/encoder4editing/datasets/__pycache__/
+backend/app/encoder4editing/criteria/__pycache__/
+
+# Ignore static files generated at runtime (if any)
+backend/app/static/
