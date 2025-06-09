@@ -7,7 +7,7 @@
   
 ### Cài đặt checkpoints:
 ```bash
-cd Nhan-Dang---CS338.P21/app
+cd Nhan-Dang---CS338.P21/backend/app
 mkdir pretrained_models
 ./down_ckp.sh
 ```
@@ -64,6 +64,6 @@ sudo pip install dlib
 
 ### Cách chạy Fastapi:
 ```bash
-cd Nhan-Dang---CS338.P21/app
+cd Nhan-Dang---CS338.P21/backend/app
 uvicorn main:app --reload --port 8001
 ```
