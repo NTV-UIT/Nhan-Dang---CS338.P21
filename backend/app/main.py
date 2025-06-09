@@ -4,6 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from apis.mapper_router import router as mapper_router
 import os
+import sys
+sys.path.insert(0, os.path.join(os.environ['CONDA_PREFIX'], 'lib/python3.12/site-packages'))
 
 # Create necessary directories
 os.makedirs("templates", exist_ok=True)

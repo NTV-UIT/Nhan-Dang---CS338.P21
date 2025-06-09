@@ -18,7 +18,7 @@ nvcc --version
 ```
 - Dựa vào cuda toolkit version (ví dụ: 12.8), ta cài tương ứng bản Pytorch:
 ```bash
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu12.8
+conda install pytorch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 pytorch-cuda=12.4 -c pytorch -c nvidia
 ```
 
 3. Cài đặt TensorFlow:
@@ -28,7 +28,7 @@ pip install tensorflow==2.17.1
 
 4. Cài đặt các thư viện bổ sung:
 ```bash
-pip install -r requirements.txt
+python -m pip install -r backend/app/requirements.txt
 ```
 
 5. Check PyTorch CUDA availability:
@@ -49,7 +49,14 @@ sudo update-alternatives --install /usr/bin/ninja ninja /usr/local/bin/ninja 1 -
 ```
 8. Install dlib (Linux only):
 ```bash
-sudo pip install cmake
-sudo pip install dlib
+python -m pip install --upgrade pip
+python -m pip install cmake dlib
 ```
 - If u get error try [this](https://github.com/z-mahmud22/Dlib_Windows_Python3.x)
+
+9. uvicorn
+```bash
+python -m pip install --upgrade pip
+python -m pip install --force-reinstall --upgrade uvicorn
+python -m uvicorn main:app --reload --port 8000
+```
