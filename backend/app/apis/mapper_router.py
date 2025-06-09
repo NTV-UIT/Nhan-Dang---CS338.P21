@@ -182,6 +182,13 @@ async def mapper(
         args.opts_e4e = opts_e4e
         args.generator_e4e = generator_e4e
 
+        # Log device info for debugging GPU usage
+        print("[DEBUG] net_e4e device:", next(net_e4e.parameters()).device)
+        print("[DEBUG] mapper_net device:", next(args.mapper_net.parameters()).device)
+        print("[DEBUG] torch.cuda.is_available():", torch.cuda.is_available())
+        print("[DEBUG] torch.cuda.current_device():", torch.cuda.current_device() if torch.cuda.is_available() else 'N/A')
+        print("[DEBUG] torch.cuda.get_device_name(0):", torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'N/A')
+
         results = run_mapper(args)
         
         if not results:
@@ -248,3 +255,6 @@ if __name__ == "__main__":
         print("Test completed successfully!")
     except Exception as e:
         print(f"Test failed: {str(e)}")
+    
+    print("net_e4e device:", next(net_e4e.parameters()).device)
+    print("mapper_net device:", next(args.mapper_net.parameters()).device)

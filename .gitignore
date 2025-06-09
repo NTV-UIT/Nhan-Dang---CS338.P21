@@ -11,6 +11,74 @@
 # production
 /build
 
+# Build, dist, and packaging
+build/
+dist/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# mypy
+.mypy_cache/
+.dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# VS Code
+.vscode/
+
+# Python virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Mac
+.DS_Store
+
+# System
+Thumbs.db
+
+# Log files
+*.log
+
+# Compiled CUDA
+*.cu.o
+*.ptx
+
+# Ninja build
+ninja-linux.zip
+
+# Results
+results/
+
 # misc
 .DS_Store
 .env.local
@@ -49,3 +117,6 @@ __pycache__/
 **/*.zip
 **/*.rar
 **/*.7z
+
+# React build
+my-app/build/

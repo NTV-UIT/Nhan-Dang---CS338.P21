@@ -1,510 +1,132 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Paper,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  Button,
-  Slider,
-  CircularProgress,
-  IconButton,
-  Dialog,
-  DialogContent,
-} from "@mui/material";
+import { Box, Typography, Button, CircularProgress, Paper, FormControl, InputLabel, Select, MenuItem, IconButton, Dialog, DialogContent } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import DownloadIcon from "@mui/icons-material/Download";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CloseIcon from "@mui/icons-material/Close";
 
 const mapperOptions = [
-  "afro", "angry", "Beyonce", "bobcut", "bowlcut", "curly hair",
-  "Hilary Clinton", "Jhonny Depp", "mohawk", "purple hair", "surprised",
-  "Taylor Swift", "trump", "Mark Zuckerberg",
+  "afro", "bobcut", "bowlcut", "curly_hair", "mohawk", "purple_hair"
 ];
 
 export default function App() {
-  const [method, setMethod] = useState("Optimization");
-  const [experimentType, setExperimentType] = useState("edit");
-  const [description, setDescription] = useState("");
-  const [latentPath, setLatentPath] = useState("");
-  const [latentFile, setLatentFile] = useState(null);
-  const [optimizationSteps, setOptimizationSteps] = useState(40);
-  const [l2Lambda, setL2Lambda] = useState(0.008);
-  const [idLambda, setIdLambda] = useState(0.005);
-  const [stylespace, setStylespace] = useState(false);
-  const [createVideo, setCreateVideo] = useState(false);
-  const [editType, setEditType] = useState("surprised");
-  const [neutral, setNeutral] = useState("face with eyes");
-  const [target, setTarget] = useState("face with blue eyes");
-  const [beta, setBeta] = useState(0.15);
-  const [alpha, setAlpha] = useState(-7.1);
+  const [editType, setEditType] = useState("afro");
   const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [outputImage, setOutputImage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [originalImage, setOriginalImage] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState("");
   const [zoomOpen, setZoomOpen] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setOutputImage(
-        image ||
-          "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600"
-      );
-      setLoading(false);
-    }, 2000);
-  };
-
+  // Xử lý upload ảnh
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setImage(URL.createObjectURL(file));
+    setImageFile(file);
+    setOutputImage(null);
+    setOriginalImage(null);
+    setError("");
   };
 
-  const handleLatentFileChange = (e) => {
-    setLatentFile(e.target.files[0]);
-    setLatentPath(e.target.files[0]?.name || "");
+  // Gửi request tới /mapper
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!imageFile) return;
+    setProcessing(true);
+    setError("");
+    setOutputImage(null);
+    setOriginalImage(null);
+    try {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+      formData.append("function", editType);
+      const res = await fetch("http://localhost:8000/mapper/", {
+        method: "POST",
+        body: formData,
+      });
+      let data;
+      let text = await res.text();
+      console.log("[DEBUG] Raw response text:", text);
+      try {
+        data = JSON.parse(text);
+      } catch (jsonErr) {
+        setError("Lỗi khi đọc dữ liệu trả về từ server.");
+        setProcessing(false);
+        return;
+      }
+      console.log("[DEBUG] Parsed response:", data);
+      if (res.ok && data.modified_image && data.original_image) {
+        setOutputImage(`data:image/png;base64,${data.modified_image}`);
+        setOriginalImage(`data:image/png;base64,${data.original_image}`);
+      } else {
+        setError(data.message || "Có lỗi xảy ra khi xử lý ảnh.");
+      }
+    } catch (err) {
+      setError("Không thể kết nối tới server hoặc lỗi mạng.");
+    } finally {
+      setProcessing(false);
+    }
   };
 
-  const renderOptimizationFields = () => (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      <FormControl fullWidth size="small">
-        <InputLabel>Experiment Type</InputLabel>
-        <Select
-          value={experimentType}
-          label="Experiment Type"
-          onChange={(e) => setExperimentType(e.target.value)}
-        >
-          <MenuItem value="edit">edit</MenuItem>
-          <MenuItem value="free_generation">free_generation</MenuItem>
-        </Select>
-      </FormControl>
-      <TextField
-        label="Description"
-        placeholder="A person with purple hair"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        fullWidth
-        size="small"
-      />
-      <Box>
-        <TextField
-          label="Latent Path"
-          value={latentPath}
-          onChange={(e) => setLatentPath(e.target.value)}
-          fullWidth
-          size="small"
-          sx={{ mb: 1 }}
-        />
-        <Button variant="outlined" component="label" size="small">
-          Upload Latent File
-          <input
-            type="file"
-            hidden
-            accept=".npz,.npy"
-            onChange={handleLatentFileChange}
-          />
-        </Button>
-        {latentFile && (
-          <Typography variant="caption" sx={{ ml: 1 }}>
-            {latentFile.name}
-          </Typography>
-        )}
-      </Box>
-      <TextField
-        label="Optimization Steps"
-        type="number"
-        value={optimizationSteps}
-        onChange={(e) => setOptimizationSteps(Number(e.target.value))}
-        fullWidth
-        size="small"
-        inputProps={{ min: 1, step: 1 }}
-      />
-      <TextField
-        label="L2 Lambda"
-        type="number"
-        value={l2Lambda}
-        onChange={(e) => setL2Lambda(Number(e.target.value))}
-        fullWidth
-        size="small"
-        inputProps={{ step: 0.001, min: 0 }}
-      />
-      <TextField
-        label="ID Lambda"
-        type="number"
-        value={idLambda}
-        onChange={(e) => setIdLambda(Number(e.target.value))}
-        fullWidth
-        size="small"
-        inputProps={{ step: 0.001, min: 0 }}
-      />
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={stylespace}
-              onChange={(e) => setStylespace(e.target.checked)}
-              size="small"
-            />
-          }
-          label="Edit StyleSpace"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={createVideo}
-              onChange={(e) => setCreateVideo(e.target.checked)}
-              size="small"
-            />
-          }
-          label="Create Video"
-        />
-      </Box>
-    </Box>
-  );
-
-  const renderMapperFields = () => (
-    <Box>
-      <FormControl fullWidth size="small">
-        <InputLabel>Edit Type</InputLabel>
-        <Select
-          value={editType}
-          label="Edit Type"
-          onChange={(e) => setEditType(e.target.value)}
-        >
-          {mapperOptions.map((opt) => (
-            <MenuItem key={opt} value={opt}>
-              {opt}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Box>
-  );
-
-  const renderGlobalDirectionsFields = () => (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      <TextField
-        label="Neutral"
-        value={neutral}
-        onChange={(e) => setNeutral(e.target.value)}
-        fullWidth
-        size="small"
-      />
-      <TextField
-        label="Target"
-        value={target}
-        onChange={(e) => setTarget(e.target.value)}
-        fullWidth
-        size="small"
-      />
-      <Box>
-        <Typography gutterBottom fontSize={14}>Beta ({beta})</Typography>
-        <Slider
-          value={beta}
-          min={0.08}
-          max={0.3}
-          step={0.01}
-          onChange={(_, v) => setBeta(v)}
-          valueLabelDisplay="auto"
-          size="small"
-        />
-      </Box>
-      <Box>
-        <Typography gutterBottom fontSize={14}>Alpha ({alpha})</Typography>
-        <Slider
-          value={alpha}
-          min={-10}
-          max={10}
-          step={0.1}
-          onChange={(_, v) => setAlpha(v)}
-          valueLabelDisplay="auto"
-          size="small"
-        />
-      </Box>
-    </Box>
-  );
-
-  // Layout: Left nửa màn hình, frame ảnh input chiếm 50% chiều cao bên trái
   return (
-    <Box
-      sx={{
-        width: "100vw",
-        height: "100vh",
-        minHeight: 500,
-        bgcolor: "#f3f4f8",
-        overflow: "hidden",
-      }}
-    >
-      <Box
-        sx={{
-          width: "100vw",
-          height: "100vh",
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
-        {/* Left Half: Input Image + Parameters */}
-        <Box
-          sx={{
-            flex: 1, // <-- giữ nguyên
-            minWidth: 0,
-            p: 2,
-            display: "flex",
-            flexDirection: "column",
-            borderRight: "1.5px solid #e0e0e0",
-            bgcolor: "#f8fafc",
-            height: "100vh",
-            gap: 2,
-          }}
-        >
-          {/* Frame: Ảnh đầu vào - chiếm đúng 50% chiều cao nửa trái */}
-          <Paper
-            elevation={3}
-            sx={{
-              flex: "0 0 50%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "calc(50vh - 24px)", // Trừ padding
-              mb: 1,
-              p: 1.5,
-            }}
-          >
-            <Typography variant="h6" sx={{ mb: 1, fontSize: 18 }}>
-              Ảnh đầu vào
-            </Typography>
-            <Button
-              variant="contained"
-              component="label"
-              startIcon={<PhotoCamera />}
-              size="small"
-              sx={{ mb: 1 }}
-            >
+    <Box sx={{ width: "100vw", minHeight: "100vh", bgcolor: "#f3f4f8", p: 2 }}>
+      {/* <Typography variant="h4" sx={{ mb: 2, textAlign: "center" }}>Demo chỉnh sửa kiểu tóc StyleCLIP</Typography> */}
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, justifyContent: "center", alignItems: "flex-start", height: "80vh" }}>
+        {/* Bên trái: chức năng và ảnh gốc */}
+        <Paper sx={{ p: 3, minWidth: 320, maxWidth: 400, flex: "0 0 350px", display: "flex", flexDirection: "column", alignItems: "center", height: "100%" }} elevation={3}>
+          <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+            <Button variant="contained" component="label" startIcon={<PhotoCamera />} size="small" fullWidth sx={{ mb: 2 }}>
               Upload Image
-              <input
-                type="file"
-                accept="image/jpeg, image/png"
-                hidden
-                onChange={handleImageChange}
-              />
+              <input type="file" accept="image/jpeg, image/png" hidden onChange={handleImageChange} />
             </Button>
-            <Box
-              sx={{
-                width: "100%",
-                height: "calc(50vh - 100px)",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                background: "#f4f5f7",
-                borderRadius: 2,
-                border: "1px solid #eee",
-                overflow: "hidden",
-                mt: 1,
-              }}
-            >
-              {image ? (
-                <img
-                  src={image}
-                  alt="input"
-                  style={{
-                    maxHeight: "100%",
-                    maxWidth: "98%",
-                    borderRadius: 8,
-                    objectFit: "contain",
-                  }}
-                />
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  Chưa có ảnh đầu vào
-                </Typography>
-              )}
+            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+              <InputLabel>Kiểu tóc</InputLabel>
+              <Select value={editType} label="Kiểu tóc" onChange={(e) => setEditType(e.target.value)}>
+                {mapperOptions.map((opt) => (
+                  <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button variant="contained" type="submit" size="small" fullWidth disabled={processing || !imageFile} sx={{ mb: 1 }}>
+              {processing ? <CircularProgress size={18} /> : "Chạy StyleCLIP"}
+            </Button>
+            {error && (
+              <Typography color="error" sx={{ mt: 1 }}>{error}</Typography>
+            )}
+          </form>
+          {/* Hiển thị ảnh đã chọn với kích thước lớn hơn */}
+          {image && (
+            <Box sx={{ mt: 3, textAlign: "center", width: "100%" }}>
+              <Typography variant="subtitle2">Ảnh đã chọn</Typography>
+              <img src={image} alt="input" style={{ maxHeight: 400, maxWidth: 320, borderRadius: 12, objectFit: "contain", margin: "0 8px" }} />
             </Box>
-          </Paper>
-          {/* Frame: Parameters and Method */}
-          <Paper
-            elevation={2}
-            sx={{
-              flex: "1 1 0",
-              display: "flex",
-              flexDirection: "column",
-              gap: 1,
-              minHeight: 60,
-              overflowY: "auto",
-              p: 1.5,
-            }}
-          >
-            <form onSubmit={handleSubmit}>
-              <FormControl fullWidth size="small" sx={{ mb: 1 }}>
-                <InputLabel>Generation Method</InputLabel>
-                <Select
-                  value={method}
-                  label="Generation Method"
-                  onChange={(e) => setMethod(e.target.value)}
-                >
-                  <MenuItem value="Optimization">Optimization</MenuItem>
-                  <MenuItem value="Mapper">Mapper</MenuItem>
-                  <MenuItem value="Global Directions">
-                    Global Directions
-                  </MenuItem>
-                </Select>
-              </FormControl>
-              <Box>
-                <Typography variant="subtitle1" sx={{ mb: 1, fontSize: 16 }}>
-                  Tham số
-                </Typography>
-                {method === "Optimization" && renderOptimizationFields()}
-                {method === "Mapper" && renderMapperFields()}
-                {method === "Global Directions" &&
-                  renderGlobalDirectionsFields()}
+          )}
+        </Paper>
+        {/* Bên phải: ảnh gen ra */}
+        <Paper sx={{ p: 3, flex: 1, minWidth: 320, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", bgcolor: "#fff" }} elevation={3}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Ảnh đã chỉnh sửa</Typography>
+          {outputImage ? (
+            <>
+              <img src={outputImage} alt="output" style={{ maxHeight: 600, maxWidth: 480, borderRadius: 12, objectFit: "contain", margin: "0 8px", cursor: "zoom-in" }} onClick={() => setZoomOpen(true)} />
+              <Box sx={{ mt: 2 }}>
+                <IconButton color="primary" aria-label="Download" component="a" href={outputImage} download="styleclip_output.png" size="large"><DownloadIcon /></IconButton>
+                <IconButton color="primary" aria-label="Zoom" onClick={() => setZoomOpen(true)} size="large"><ZoomInIcon /></IconButton>
               </Box>
-              <Button
-                variant="contained"
-                type="submit"
-                size="small"
-                fullWidth
-                disabled={loading}
-                sx={{ mt: 1 }}
-              >
-                {loading ? <CircularProgress size={18} /> : "Chạy StyleCLIP"}
-              </Button>
-            </form>
-          </Paper>
-        </Box>
-        {/* Right Half: Output Image */}
-        <Box
-          sx={{
-            flex: 3, // <-- đổi từ 1 thành 3 để chiếm 3/4 chiều ngang
-            p: 2,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            height: "100vh",
-            justifyContent: "center",
-            overflow: "hidden",
-          }}
-        >
-          <Paper
-            elevation={4}
-            sx={{
-              width: "100%",
-              height: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              bgcolor: "#fff",
-              justifyContent: "center",
-              p: 2,
-            }}
-          >
-            <Typography variant="h5" sx={{ mb: 1, fontSize: 22 }}>
-              Ảnh đầu ra
-            </Typography>
-            <Box
-              sx={{
-                width: "100%",
-                height: "80vh",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                position: "relative",
-                background: "#f4f5f7",
-                borderRadius: 2,
-                border: "1px solid #eee",
-                overflow: "hidden",
-              }}
-            >
-              {loading ? (
-                <CircularProgress size={38} />
-              ) : outputImage ? (
-                <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
-                  <img
-                    src={outputImage}
-                    alt="output"
-                    style={{
-                      maxHeight: "76vh",
-                      maxWidth: "98%",
-                      borderRadius: 8,
-                      objectFit: "contain",
-                      boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-                      cursor: "zoom-in",
-                      margin: "0 auto",
-                      display: "block",
-                    }}
-                    onClick={() => setZoomOpen(true)}
-                  />
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 8,
-                      right: 8,
-                      display: "flex",
-                      gap: 1,
-                    }}
-                  >
-                    <IconButton
-                      color="primary"
-                      onClick={() => setZoomOpen(true)}
-                      size="small"
-                      aria-label="Zoom"
-                    >
-                      <ZoomInIcon />
-                    </IconButton>
-                    <IconButton
-                      color="primary"
-                      aria-label="Download"
-                      component="a"
-                      href={outputImage}
-                      download="styleclip_output.png"
-                      size="small"
-                    >
-                      <DownloadIcon />
-                    </IconButton>
-                  </Box>
-                </Box>
-              ) : (
-                <Typography variant="body1" color="text.secondary">
-                  Ảnh đầu ra sẽ hiển thị ở đây
-                </Typography>
-              )}
+            </>
+          ) : (
+            <Box sx={{ width: 320, height: 400, border: "2px dashed #ccc", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "#bbb" }}>
+              <Typography variant="body2">Chưa có ảnh kết quả</Typography>
             </Box>
-          </Paper>
-        </Box>
+          )}
+        </Paper>
       </Box>
       {/* Zoom Dialog */}
       <Dialog open={zoomOpen} onClose={() => setZoomOpen(false)} maxWidth="md">
         <DialogContent sx={{ position: "relative", p: 0 }}>
-          <IconButton
-            onClick={() => setZoomOpen(false)}
-            sx={{
-              position: "absolute",
-              top: 16,
-              right: 16,
-              background: "white",
-              zIndex: 10,
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-          {outputImage && (
-            <img
-              src={outputImage}
-              alt="Zoomed output"
-              style={{
-                maxWidth: "90vw",
-                maxHeight: "80vh",
-                display: "block",
-                margin: "auto",
-              }}
-            />
-          )}
+          <IconButton onClick={() => setZoomOpen(false)} sx={{ position: "absolute", top: 16, right: 16, background: "white", zIndex: 10 }}><CloseIcon /></IconButton>
+          {outputImage && <img src={outputImage} alt="Zoomed output" style={{ maxWidth: "90vw", maxHeight: "80vh", display: "block", margin: "auto" }} />}
         </DialogContent>
       </Dialog>
     </Box>
