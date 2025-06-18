@@ -97,12 +97,16 @@ Nhan-Dang---CS338.P21/
 
 ### 2.1. So sánh mô hình cũ và mới
 
+<div align="center">
+
 | Độ đo                  | Mô hình cũ   | Mô hình mới   |
 |------------------------|--------------|--------------|
 | CLIP Similarity ↑      | **27.7237**  | 26.5917      |
 | ΔCLIP ↑                | 0.1540       | **0.1720**   |
 | LPIPS (vs original) ↓  | 0.1857       | **0.1728**   |
 | FID (vs original) ↓    | 0.7745       | **0.6210**   |
+
+</div>
 
 **Bảng 1:** Kết quả đánh giá chi tiết giữa mô hình cũ và mô hình mới. ↑: giá trị càng cao càng tốt, ↓: giá trị càng thấp càng tốt.
 
