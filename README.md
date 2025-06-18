@@ -116,6 +116,18 @@ Nhan-Dang---CS338.P21/
 3. **FID**: Đo lường chất lượng và tính đa dạng của ảnh được tạo ra
 4. **Delta CLIP**: Đánh giá mức độ thay đổi so với ảnh gốc
 
+### 2.3. Cách chạy đánh giá mô hình
+
+Để đánh giá và so sánh hai mô hình Latent Mapper (cũ và mới), sử dụng script sau:
+
+```bash
+cd backend/app/StyleCLIP/mapper/scripts
+python evaluate_mappers.py
+```
+
+- Kết quả đánh giá (bao gồm các chỉ số và hình ảnh so sánh) sẽ được lưu trong thư mục:
+  `backend/app/StyleCLIP/mapper/scripts/results/evaluation_results/`
+
 ## 3. Yêu cầu hệ thống
 - Đã cài đặt Anaconda hoặc Miniconda
 - GPU NVIDIA hỗ trợ CUDA (khuyến nghị)
