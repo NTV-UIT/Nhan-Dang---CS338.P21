@@ -44,20 +44,15 @@ Nhan-Dang---CS338.P21/
 ## 2. Kết quả đánh giá mô hình
 
 ### 2.1. So sánh mô hình cũ và mới
-- **CLIP Similarity**:
-  - Mô hình cũ: 27.7237
-  - Mô hình mới: 26.5917
-  - Delta CLIP cũ: 0.1540
-  - Delta CLIP mới: 0.1720
 
-- **LPIPS (Perceptual Similarity)**:
-  - Mô hình cũ vs ảnh gốc: 0.1857
-  - Mô hình mới vs ảnh gốc: 0.1728
-  - Mô hình cũ vs mô hình mới: 0.0721
+| Độ đo                  | Mô hình cũ   | Mô hình mới   |
+|------------------------|--------------|--------------|
+| CLIP Similarity ↑      | **27.7237**  | 26.5917      |
+| ΔCLIP ↑                | 0.1540       | **0.1720**   |
+| LPIPS (vs original) ↓  | 0.1857       | **0.1728**   |
+| FID (vs original) ↓    | 0.7745       | **0.6210**   |
 
-- **FID (Fréchet Inception Distance)**:
-  - Mô hình cũ vs ảnh gốc: 0.7745
-  - Mô hình mới vs ảnh gốc: 0.6210
+**Bảng 1:** Kết quả đánh giá chi tiết giữa mô hình cũ và mô hình mới. ↑: giá trị càng cao càng tốt, ↓: giá trị càng thấp càng tốt.
 
 ### 2.2. Phương pháp đánh giá
 1. **CLIP Similarity**: Đo lường độ tương đồng ngữ nghĩa giữa ảnh kết quả và prompt text
