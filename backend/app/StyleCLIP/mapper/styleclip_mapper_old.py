@@ -8,7 +8,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 styleclip_dir = os.path.dirname(os.path.dirname(current_dir))  # StyleCLIP root
 sys.path.append(styleclip_dir)
 
-from latent_mappers import SingleMapper, LevelsMapper, WithoutToRGBStyleSpaceMapper
+from latent_mappers_original import SingleMapper, LevelsMapper, WithoutToRGBStyleSpaceMapper
 from models.stylegan2.model import Generator
 
 

@@ -14,39 +14,27 @@ from models.stylegan2.model import EqualLinear, PixelNorm
 STYLESPACE_DIMENSIONS = [512 for _ in range(15)] + [256, 256, 256] + [128, 128, 128] + [64, 64, 64] + [32, 32]
 
 
-class ResidualBlock(nn.Module):
-    def __init__(self, latent_dim, dropout_prob=0.1):
-        super().__init__()
-        self.linear1 = EqualLinear(latent_dim, latent_dim, lr_mul=0.01, activation='fused_lrelu')
-        self.dropout = nn.Dropout(dropout_prob)
-        self.linear2 = EqualLinear(latent_dim, latent_dim, lr_mul=0.01, activation='fused_lrelu')
-    
-    def forward(self, x):
-        residual = x
-        out = self.linear1(x)
-        out = self.dropout(out)
-        out = self.linear2(out)
-        out = out + residual  # residual connection
-        return out
-
 class Mapper(nn.Module):
 
-    def __init__(self, opts, latent_dim=512, num_blocks=6, dropout_prob=0.1):
+    def __init__(self, opts, latent_dim=512):
         super(Mapper, self).__init__()
 
         self.opts = opts
         layers = [PixelNorm()]
 
-        # Thay vì chỉ 4 lớp EqualLinear, giờ dùng ResidualBlock nhiều lớp hơn
-        for _ in range(num_blocks):
-            layers.append(ResidualBlock(latent_dim, dropout_prob))
+        for i in range(4):
+            layers.append(
+                EqualLinear(
+                    latent_dim, latent_dim, lr_mul=0.01, activation='fused_lrelu'
+                )
+            )
 
         self.mapping = nn.Sequential(*layers)
+
 
     def forward(self, x):
         x = self.mapping(x)
         return x
-
 
 
 class SingleMapper(nn.Module):

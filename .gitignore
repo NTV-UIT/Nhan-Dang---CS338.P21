@@ -86,6 +86,8 @@ pretrained_models/
 # Results, outputs
 results/
 **/results/
+**/evaluation_results/
+backend/app/StyleCLIP/mapper/scripts/results/evaluation_results/
 
 # React (frontend)
 my-app/node_modules/

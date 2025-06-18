@@ -14,17 +14,20 @@ import dlib
 
 # Add StyleCLIP root to Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
-styleclip_dir = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
-sys.path.append(styleclip_dir)
+mapper_dir = os.path.dirname(current_dir)  # mapper directory
+styleclip_dir = os.path.dirname(os.path.dirname(current_dir))  # StyleCLIP root
+sys.path.extend([mapper_dir, styleclip_dir])
 
 # Add encoder4editing to Python path
 encoder4editing_dir = os.path.join(os.path.dirname(styleclip_dir), 'encoder4editing')
 sys.path.append(encoder4editing_dir)
 
-from ..training.train_utils import convert_s_tensor_to_list
-from ..datasets.latents_dataset import LatentsDataset, StyleSpaceLatentsDataset
-from ..options.test_options import TestOptions
-from ..styleclip_mapper import StyleCLIPMapper
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from mapper.datasets.latents_dataset import LatentsDataset, StyleSpaceLatentsDataset
+from mapper.training.train_utils import convert_s_tensor_to_list
+from mapper.options.test_options import TestOptions
+from mapper.styleclip_mapper import StyleCLIPMapper
 import argparse
 
 from encoder4editing.models.psp import pSp
