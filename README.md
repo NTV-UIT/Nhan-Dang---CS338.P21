@@ -1,3 +1,55 @@
+<!-- Banner -->
+<p align="center">
+  <a href="https://www.uit.edu.vn/" title="Trường Đại học Công nghệ Thông tin" style="border: none;">
+    <img src="https://i.imgur.com/WmMnSRt.png" alt="Trường Đại học Công nghệ Thông tin | University of Information Technology">
+  </a>
+</p>
+
+<h1 align="center"><b>MLops</b></h1>
+
+<div align="center">
+  <table>
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>MSSV</th>
+        <th>Họ và Tên</th>
+        <th>Chức vụ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>22520775</td>
+        <td>Nguyễn Xuân Linh</td>
+        <td>Nhóm trưởng</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>22521677</td>
+        <td>Nguyễn Thế Vĩnh</td>
+        <td>Thành viên</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>22521671</td>
+        <td>Lưu Khánh Vinh</td>
+        <td>Thành viên</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+# GIỚI THIỆU KHÓA HỌC
+* **Tên Khóa Học:** Nhận Dạng.
+* **Mã Lớp:** CS338.P21.
+* **Năm Học:** HK2 (2024 - 2025).
+* **Giảng Viên**: TS Dương Việt Hằng, Trần oãn Thuyên
+
+## Tóm tắt đồ án
+
+Đồ án xây dựng ứng dụng chỉnh sửa ảnh khuôn mặt, tập trung vào thay đổi kiểu tóc dựa trên mô tả văn bản tự nhiên. Hệ thống sử dụng StyleCLIP (kết hợp StyleGAN và CLIP) để điều khiển ảnh sinh ra bằng ngôn ngữ. Sau khi thử nghiệm nhiều phương pháp, nhóm chọn và cải tiến Latent Mapper để nâng cao chất lượng chỉnh sửa. Ứng dụng cho phép người dùng tải ảnh, nhập mô tả (ví dụ: "tóc dài", "tóc đỏ") và nhận kết quả chỉnh sửa nhanh, chính xác.
+
 # Hướng dẫn cài đặt & sử dụng dự án StyleCLIP
 
 ## 1. Cấu trúc thư mục
