@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, CircularProgress, Paper, FormControl, InputLabel, Select, MenuItem, IconButton, Dialog, DialogContent, Rating, Divider, Radio, RadioGroup, FormControlLabel, FormLabel } from "@mui/material";
+import { Box, Typography, Button, CircularProgress, Paper, FormControl, InputLabel, Select, MenuItem, IconButton, Dialog, DialogContent, Rating, Radio, RadioGroup, FormControlLabel, FormLabel } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import DownloadIcon from "@mui/icons-material/Download";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
@@ -16,7 +16,6 @@ export default function App() {
   const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [outputImage, setOutputImage] = useState(null);
-  const [originalImage, setOriginalImage] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
   const [zoomOpen, setZoomOpen] = useState(false);
@@ -95,7 +94,6 @@ export default function App() {
     setOriginalImageFile(file);
     setOriginalImageUrl(url);
     setOutputImage(null);
-    setOriginalImage(null);
     setError("");
     setInputImageType("cropped");
   };
@@ -123,7 +121,6 @@ export default function App() {
     setProcessing(true);
     setError("");
     setOutputImage(null);
-    setOriginalImage(null);
     try {
       const formData = new FormData();
       formData.append("image", imageFile);
@@ -145,7 +142,6 @@ export default function App() {
       console.log("[DEBUG] Parsed response:", data);
       if (res.ok && data.modified_image && data.original_image) {
         setOutputImage(`data:image/png;base64,${data.modified_image}`);
-        setOriginalImage(`data:image/png;base64,${data.original_image}`);
         setShowRating(true); // Show rating after successful generation
       } else {
         setError(data.message || "Có lỗi xảy ra khi xử lý ảnh.");
@@ -160,9 +156,9 @@ export default function App() {
   return (
     <Box sx={{ width: "100vw", minHeight: "100vh", bgcolor: "#f3f4f8", p: 2 }}>
       {/* <Typography variant="h4" sx={{ mb: 2, textAlign: "center" }}>Demo chỉnh sửa kiểu tóc StyleCLIP</Typography> */}
-      <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, justifyContent: "center", alignItems: "flex-start", height: "80vh" }}>
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, justifyContent: "center", alignItems: "flex-start", minHeight: 520 }}>
         {/* Bên trái: chức năng và ảnh gốc */}
-        <Paper sx={{ p: 3, minWidth: 320, maxWidth: 400, flex: "0 0 350px", display: "flex", flexDirection: "column", alignItems: "center", height: "100%" }} elevation={3}>
+        <Paper sx={{ p: 3, minWidth: 320, maxWidth: 400, flex: "0 0 350px", display: "flex", flexDirection: "column", alignItems: "center", minHeight: 520 }} elevation={3}>
           <form onSubmit={handleSubmit} style={{ width: "100%" }}>
             <Button variant="contained" component="label" startIcon={<PhotoCamera />} size="small" fullWidth sx={{ mb: 2 }}>
               Upload Image
@@ -244,25 +240,25 @@ export default function App() {
           </form>
           {/* Hiển thị ảnh đã chọn với kích thước lớn hơn */}
           {image && (
-            <Box sx={{ mt: 3, textAlign: "center", width: "100%" }}>
+            <Box sx={{ mt: 1, textAlign: "center", width: "100%" }}>
               <Typography variant="subtitle2">Ảnh đã chọn</Typography>
-              <img src={image} alt="input" style={{ maxHeight: 400, maxWidth: 320, borderRadius: 12, objectFit: "contain", margin: "0 8px" }} />
+              <img src={image} alt="input" style={{ maxHeight: 320, maxWidth: 320, borderRadius: 12, objectFit: "cover", margin: "0 8px" }} />
             </Box>
           )}
         </Paper>
         {/* Bên phải: ảnh gen ra */}
-        <Paper sx={{ p: 3, flex: 1, minWidth: 320, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", bgcolor: "#fff" }} elevation={3}>
+        <Paper sx={{ p: 3, flex: 1, minWidth: 320, display: "flex", flexDirection: "column", alignItems: "center", bgcolor: "#fff", minHeight: 520, justifyContent: "flex-start" }} elevation={3}>
           <Typography variant="h6" sx={{ mb: 2 }}>Ảnh đã chỉnh sửa</Typography>
           {outputImage ? (
             <>
-              <img src={outputImage} alt="output" style={{ maxHeight: 600, maxWidth: 480, borderRadius: 12, objectFit: "contain", margin: "0 8px", cursor: "zoom-in" }} onClick={() => setZoomOpen(true)} />
+              <img src={outputImage} alt="output" style={{ maxHeight: 700, maxWidth: 700, borderRadius: 12, objectFit: "cover", margin: "0 8px", cursor: "zoom-in" }} onClick={() => setZoomOpen(true)} />
               <Box sx={{ mt: 2 }}>
                 <IconButton color="primary" aria-label="Download" component="a" href={outputImage} download="styleclip_output.png" size="large"><DownloadIcon /></IconButton>
                 <IconButton color="primary" aria-label="Zoom" onClick={() => setZoomOpen(true)} size="large"><ZoomInIcon /></IconButton>
               </Box>
             </>
           ) : (
-            <Box sx={{ width: 320, height: 400, border: "2px dashed #ccc", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "#bbb" }}>
+            <Box sx={{ width: 500, height: 500, border: "2px dashed #ccc", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "#bbb" }}>
               <Typography variant="body2">Chưa có ảnh kết quả</Typography>
             </Box>
           )}
