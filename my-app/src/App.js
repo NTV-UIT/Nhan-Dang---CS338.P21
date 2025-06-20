@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { Box, Typography, Button, CircularProgress, Paper, FormControl, InputLabel, Select, MenuItem, IconButton, Dialog, DialogContent } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Button, CircularProgress, Paper, FormControl, InputLabel, Select, MenuItem, IconButton, Dialog, DialogContent, Rating, Divider } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import DownloadIcon from "@mui/icons-material/Download";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CloseIcon from "@mui/icons-material/Close";
+import StarIcon from "@mui/icons-material/Star";
 
 const mapperOptions = [
   "afro", "bobcut", "bowlcut", "curly_hair", "mohawk", "purple_hair"
@@ -18,6 +19,63 @@ export default function App() {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
   const [zoomOpen, setZoomOpen] = useState(false);
+  
+  // Rating states
+  const [ratings, setRatings] = useState({});
+  const [userRating, setUserRating] = useState(0);
+  const [showRating, setShowRating] = useState(false);
+
+  // Load ratings from localStorage
+  useEffect(() => {
+    const savedRatings = localStorage.getItem('styleclip_ratings');
+    if (savedRatings) {
+      setRatings(JSON.parse(savedRatings));
+    }
+  }, []);
+
+  // Save ratings to localStorage
+  const saveRatings = (newRatings) => {
+    setRatings(newRatings);
+    localStorage.setItem('styleclip_ratings', JSON.stringify(newRatings));
+  };
+
+  // Calculate average rating for a specific hair style
+  const getAverageRating = (hairStyle) => {
+    const styleRatings = ratings[hairStyle];
+    if (!styleRatings || styleRatings.length === 0) return 0;
+    const sum = styleRatings.reduce((acc, rating) => acc + rating, 0);
+    return Math.round((sum / styleRatings.length) * 100) / 100;
+  };
+
+  // Calculate overall average rating
+  const getOverallAverageRating = () => {
+    let totalSum = 0;
+    let totalCount = 0;
+    
+    Object.values(ratings).forEach(styleRatings => {
+      if (styleRatings && styleRatings.length > 0) {
+        totalSum += styleRatings.reduce((acc, rating) => acc + rating, 0);
+        totalCount += styleRatings.length;
+      }
+    });
+    
+    return totalCount > 0 ? Math.round((totalSum / totalCount) * 100) / 100 : 0;
+  };
+
+  // Submit user rating
+  const handleRatingSubmit = () => {
+    if (userRating === 0) return;
+    
+    const newRatings = { ...ratings };
+    if (!newRatings[editType]) {
+      newRatings[editType] = [];
+    }
+    newRatings[editType].push(userRating);
+    
+    saveRatings(newRatings);
+    setUserRating(0);
+    setShowRating(false);
+  };
 
   // Xử lý upload ảnh
   const handleImageChange = (e) => {
@@ -60,6 +118,7 @@ export default function App() {
       if (res.ok && data.modified_image && data.original_image) {
         setOutputImage(`data:image/png;base64,${data.modified_image}`);
         setOriginalImage(`data:image/png;base64,${data.original_image}`);
+        setShowRating(true); // Show rating after successful generation
       } else {
         setError(data.message || "Có lỗi xảy ra khi xử lý ảnh.");
       }
@@ -85,13 +144,51 @@ export default function App() {
               <InputLabel>Kiểu tóc</InputLabel>
               <Select value={editType} label="Kiểu tóc" onChange={(e) => setEditType(e.target.value)}>
                 {mapperOptions.map((opt) => (
-                  <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                  <MenuItem key={opt} value={opt}>
+                    {opt} ({getAverageRating(opt)}/10 ⭐)
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
-            <Button variant="contained" type="submit" size="small" fullWidth disabled={processing || !imageFile} sx={{ mb: 1 }}>
+            <Button variant="contained" type="submit" size="small" fullWidth disabled={processing || !imageFile} sx={{ mb: 2 }}>
               {processing ? <CircularProgress size={18} /> : "Chạy StyleCLIP"}
             </Button>
+            
+            {/* Rating Section */}
+            <Paper sx={{ p: 2, mb: 2, bgcolor: "#f9f9f9" }} elevation={1}>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>📊 Độ đo đánh giá</Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>{editType}:</strong> {getAverageRating(editType)}/10 
+                {ratings[editType] && ` (${ratings[editType].length} votes)`}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>Tổng thể:</strong> {getOverallAverageRating()}/10
+              </Typography>
+              
+              {showRating && (
+                <Box sx={{ mt: 2, textAlign: "center" }}>
+                  <Typography variant="body2" sx={{ mb: 1 }}>Đánh giá kết quả:</Typography>
+                  <Rating
+                    name="user-rating"
+                    value={userRating}
+                    onChange={(_, newValue) => setUserRating(newValue)}
+                    max={10}
+                    size="small"
+                    icon={<StarIcon fontSize="inherit" />}
+                    emptyIcon={<StarIcon fontSize="inherit" />}
+                  />
+                  <Box sx={{ mt: 1 }}>
+                    <Button size="small" variant="outlined" onClick={handleRatingSubmit} disabled={userRating === 0}>
+                      Gửi đánh giá
+                    </Button>
+                    <Button size="small" onClick={() => setShowRating(false)} sx={{ ml: 1 }}>
+                      Bỏ qua
+                    </Button>
+                  </Box>
+                </Box>
+              )}
+            </Paper>
+
             {error && (
               <Typography color="error" sx={{ mt: 1 }}>{error}</Typography>
             )}
