@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, CircularProgress, Paper, FormControl, InputLabel, Select, MenuItem, IconButton, Dialog, DialogContent, Rating, Divider } from "@mui/material";
+import { Box, Typography, Button, CircularProgress, Paper, FormControl, InputLabel, Select, MenuItem, IconButton, Dialog, DialogContent, Rating, Divider, Radio, RadioGroup, FormControlLabel, FormLabel } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import DownloadIcon from "@mui/icons-material/Download";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CloseIcon from "@mui/icons-material/Close";
 import StarIcon from "@mui/icons-material/Star";
+import CropDialog from "./CropDialog";
 
 const mapperOptions = [
   "afro", "bobcut", "bowlcut", "curly_hair", "mohawk", "purple_hair"
@@ -24,6 +25,13 @@ export default function App() {
   const [ratings, setRatings] = useState({});
   const [userRating, setUserRating] = useState(0);
   const [showRating, setShowRating] = useState(false);
+
+  // Crop states
+  const [cropOpen, setCropOpen] = useState(false);
+  const [cropImage, setCropImage] = useState(null);
+  const [originalImageFile, setOriginalImageFile] = useState(null);
+  const [originalImageUrl, setOriginalImageUrl] = useState(null);
+  const [inputImageType, setInputImageType] = useState("cropped"); // "cropped" hoặc "original"
 
   // Load ratings from localStorage
   useEffect(() => {
@@ -81,11 +89,31 @@ export default function App() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setImage(URL.createObjectURL(file));
-    setImageFile(file);
+    const url = URL.createObjectURL(file);
+    setCropImage(url);
+    setCropOpen(true);
+    setOriginalImageFile(file);
+    setOriginalImageUrl(url);
     setOutputImage(null);
     setOriginalImage(null);
     setError("");
+    setInputImageType("cropped");
+  };
+
+  // Sau khi crop xong
+  const handleCropDone = (blob, fileUrl) => {
+    setImage(fileUrl);
+    setImageFile(new File([blob], "cropped.jpeg", { type: "image/jpeg" }));
+  };
+
+  // Khi chọn loại ảnh đầu vào
+  const handleInputImageTypeChange = (e) => {
+    setInputImageType(e.target.value);
+    if (e.target.value === "original") {
+      setImage(originalImageUrl);
+      setImageFile(originalImageFile);
+    }
+    // Nếu chọn cropped, giữ nguyên image & imageFile hiện tại (đã crop)
   };
 
   // Gửi request tới /mapper
@@ -140,6 +168,27 @@ export default function App() {
               Upload Image
               <input type="file" accept="image/jpeg, image/png" hidden onChange={handleImageChange} />
             </Button>
+            {/* Nút cắt ảnh */}
+            {image && (
+              <Button variant="outlined" size="small" fullWidth sx={{ mb: 2 }} onClick={() => setCropOpen(true)}>
+                Cắt ảnh về hình vuông
+              </Button>
+            )}
+            {/* Chọn loại ảnh đầu vào */}
+            {image && originalImageUrl && (
+              <Box sx={{ mb: 2 }}>
+                <FormLabel component="legend">Chọn ảnh đầu vào</FormLabel>
+                <RadioGroup
+                  row
+                  value={inputImageType}
+                  onChange={handleInputImageTypeChange}
+                  name="input-image-type"
+                >
+                  <FormControlLabel value="cropped" control={<Radio />} label="Ảnh đã cắt" />
+                  <FormControlLabel value="original" control={<Radio />} label="Ảnh gốc" />
+                </RadioGroup>
+              </Box>
+            )}
             <FormControl fullWidth size="small" sx={{ mb: 2 }}>
               <InputLabel>Kiểu tóc</InputLabel>
               <Select value={editType} label="Kiểu tóc" onChange={(e) => setEditType(e.target.value)}>
@@ -219,6 +268,13 @@ export default function App() {
           )}
         </Paper>
       </Box>
+      {/* Crop Dialog */}
+      <CropDialog
+        open={cropOpen}
+        imageSrc={cropImage || image}
+        onClose={() => setCropOpen(false)}
+        onCropDone={handleCropDone}
+      />
       {/* Zoom Dialog */}
       <Dialog open={zoomOpen} onClose={() => setZoomOpen(false)} maxWidth="md">
         <DialogContent sx={{ position: "relative", p: 0 }}>

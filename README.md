@@ -5,7 +5,7 @@
   </a>
 </p>
 
-<h1 align="center"><b>MLops</b></h1>
+<h1 align="center"><b>Nhận Dạng</b></h1>
 
 <div align="center">
   <table>
@@ -44,11 +44,11 @@
 * **Tên Khóa Học:** Nhận Dạng.
 * **Mã Lớp:** CS338.P21.
 * **Năm Học:** HK2 (2024 - 2025).
-* **Giảng Viên**: TS Dương Việt Hằng, Trần oãn Thuyên
+* **Giảng Viên**: TS Dương Việt Hằng, Trần Doãn Thuyên
 
 ## Tóm tắt đồ án
 
-Đồ án xây dựng ứng dụng chỉnh sửa ảnh khuôn mặt, tập trung vào thay đổi kiểu tóc dựa trên mô tả văn bản tự nhiên. Hệ thống sử dụng StyleCLIP (kết hợp StyleGAN và CLIP) để điều khiển ảnh sinh ra bằng ngôn ngữ. Sau khi thử nghiệm nhiều phương pháp, nhóm chọn và cải tiến Latent Mapper để nâng cao chất lượng chỉnh sửa. Ứng dụng cho phép người dùng tải ảnh, nhập mô tả (ví dụ: "tóc dài", "tóc đỏ") và nhận kết quả chỉnh sửa nhanh, chính xác.
+Đồ án xây dựng ứng dụng chỉnh sửa ảnh khuôn mặt, tập trung vào thay đổi kiểu tóc dựa trên mô tả văn bản tự nhiên. Hệ thống sử dụng StyleCLIP (kết hợp StyleGAN và CLIP) để điều khiển ảnh sinh ra bằng ngôn ngữ. Sau khi thử nghiệm nhiều phương pháp, nhóm chọn và cải tiến Latent Mapper để nâng cao chất lượng và tốc độ phản hồi khi chỉnh sửa. Ứng dụng cho phép người dùng tải ảnh, chọn kiểu tóc mong muốn và nhận kết quả chỉnh sửa nhanh, chính xác.
 
 # Hướng dẫn cài đặt & sử dụng dự án StyleCLIP
 
@@ -111,10 +111,16 @@ Nhan-Dang---CS338.P21/
 **Bảng 1:** Kết quả đánh giá chi tiết giữa mô hình cũ và mô hình mới. ↑: giá trị càng cao càng tốt, ↓: giá trị càng thấp càng tốt.
 
 ### 2.2. Phương pháp đánh giá
+
+#### 2.2.1. Độ đo kỹ thuật
 1. **CLIP Similarity**: Đo lường độ tương đồng ngữ nghĩa giữa ảnh kết quả và prompt text
 2. **LPIPS**: Đánh giá sự khác biệt về mặt thị giác giữa các ảnh
 3. **FID**: Đo lường chất lượng và tính đa dạng của ảnh được tạo ra
 4. **Delta CLIP**: Đánh giá mức độ thay đổi so với ảnh gốc
+
+#### 2.2.2. Độ đo đánh giá người dùng
+5. **USS (User Satisfaction Score)**: Điểm hài lòng trung bình cho từng kiểu tóc (0-10)
+6. **OUSS (Overall User Satisfaction Score)**: Điểm hài lòng tổng thể hệ thống (0-10)
 
 ### 2.3. Cách chạy đánh giá mô hình
 
@@ -201,6 +207,83 @@ npm install
 npm start
 ```
 - Giao diện sẽ chạy tại: http://localhost:3000
+
+## 6.1. Triển khai với Docker (Khuyến nghị)
+
+### 6.1.1. Yêu cầu Docker
+- Docker >= 20.10
+- Docker Compose >= 2.0
+- NVIDIA Docker (cho GPU support)
+
+### 6.1.2. Kiểm tra yêu cầu hệ thống
+```bash
+# Kiểm tra Docker
+docker --version
+docker-compose --version
+
+# Kiểm tra NVIDIA Docker (nếu có GPU)
+docker run --rm --gpus all nvidia/cuda:12.4-base nvidia-smi
+```
+
+### 6.1.3. Triển khai tự động (Khuyến nghị)
+```bash
+# Cấp quyền thực thi
+chmod +x docker-deploy.sh
+
+# Triển khai hoàn chỉnh (tự động download models, build và start)
+./docker-deploy.sh deploy
+```
+
+### 6.1.4. Các lệnh Docker khác
+```bash
+# Chỉ kiểm tra requirements
+./docker-deploy.sh check
+
+# Chỉ download pretrained models
+./docker-deploy.sh setup
+
+# Chỉ build images
+./docker-deploy.sh build
+
+# Start với docker-compose
+docker-compose up -d
+```
+
+### 6.1.5. Build thủ công (nếu cần)
+```bash
+# Download pretrained models
+cd backend && ./down_ckp.sh && cd ..
+
+# Build backend image
+docker build -f backend/Dockerfile -t styleclip-backend:latest .
+
+# Build frontend image  
+docker build -f frontend/Dockerfile -t styleclip-frontend:latest .
+
+# Start với docker-compose
+docker-compose up -d
+```
+
+### 6.1.6. Truy cập ứng dụng Docker
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000  
+- **Nginx Proxy**: http://localhost:80 (tất cả services qua 1 port)
+
+### 6.1.7. Troubleshooting Docker
+```bash
+# Xem logs chi tiết
+docker-compose logs backend
+docker-compose logs frontend
+
+# Restart service cụ thể
+docker-compose restart backend
+
+# Kiểm tra container status
+docker ps
+
+# Vào container để debug
+docker exec -it styleclip-backend bash
+```
 
 ## 7. Sử dụng
 - Truy cập http://localhost:3000 trên trình duyệt.

@@ -1,0 +1,55 @@
+# Docker ignore file
+.git
+.gitignore
+README.md
+.env
+.vscode
+.idea
+
+# Node modules
+node_modules
+npm-debug.log*
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Large model files (should be mounted as volumes)
+backend/pretrained_models/
+*.pt
+*.pth
+*.pkl
+*.safetensors
