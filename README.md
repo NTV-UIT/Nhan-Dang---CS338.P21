@@ -205,6 +205,31 @@ npm start
 ## 7. Sử dụng
 - Truy cập http://localhost:3000 trên trình duyệt.
 - Tải ảnh lên, chọn kiểu tóc và nhấn "Chạy StyleCLIP" để nhận kết quả.
+- Sau khi tạo ảnh thành công, bạn có thể đánh giá kết quả từ 1-10 sao để cải thiện chất lượng dịch vụ.
+
+### 7.1. Tính năng đánh giá người dùng
+Ứng dụng tích hợp hệ thống đánh giá người dùng với các tính năng sau:
+
+#### 📊 **Độ đo đánh giá**
+- **USS (User Satisfaction Score)**: Điểm hài lòng riêng cho từng kiểu tóc
+- **OUSS (Overall User Satisfaction Score)**: Điểm hài lòng tổng thể của hệ thống
+- Thang điểm: 1-10 sao với độ chính xác 2 chữ số thập phân
+
+#### 🌟 **Cách sử dụng**
+1. Sau khi tạo ảnh thành công, giao diện sẽ hiển thị form đánh giá
+2. Chọn số sao từ 1-10 để đánh giá chất lượng kết quả
+3. Nhấn "Gửi đánh giá" để lưu feedback hoặc "Bỏ qua" để tiếp tục
+
+#### 📈 **Hiển thị thống kê**
+- Điểm trung bình cho từng kiểu tóc hiển thị trong dropdown selection
+- Số lượng votes cho mỗi kiểu tóc
+- Điểm tổng thể của toàn hệ thống
+- Dữ liệu được cập nhật realtime khi có đánh giá mới
+
+#### 💾 **Lưu trữ dữ liệu**
+- Dữ liệu đánh giá được lưu trong localStorage của trình duyệt
+- Không cần đăng nhập hoặc tạo tài khoản
+- Dữ liệu được bảo tồn giữa các phiên sử dụng
 
 ## 8. Ghi chú
 - Nếu backend chạy ở port khác, sửa lại URL API trong `my-app/src/App.js` cho phù hợp.
