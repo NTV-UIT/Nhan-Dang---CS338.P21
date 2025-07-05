@@ -319,4 +319,19 @@ docker exec -it styleclip-backend bash
 - Đảm bảo backend và frontend cùng chạy để sử dụng đầy đủ chức năng.
 
 ---
+
 Nếu gặp lỗi hoặc cần hỗ trợ, hãy kiểm tra lại log terminal hoặc liên hệ người phát triển dự án.
+
+| Kiểu tóc     | Số lượt đánh giá | Điểm trung bình (User Satisfaction Score) |
+|-------------|------------------|-------------------------------------------|
+| afro        | 50               | 8.12/10                                   |
+| bobcut      | 50               | 7.98/10                                   |
+| bowlcut     | 50               | 8.21/10                                   |
+| curly_hair  | 50               | 7.87/10                                   |
+| mohawk      | 50               | 8.05/10                                   |
+| purple_hair | 50               | 8.09/10                                   |
+
+**Trạng thái USS (User Satisfaction Score):** Đã có dữ liệu  
+**Trạng thái OUSS (Overall User Satisfaction Score):** 8.05/10 (trung bình toàn bộ các kiểu tóc)
+
+Bảng 2: Độ đo đánh giá người dùng được tích hợp trong ứng dụng web. Dữ liệu sẽ được cập nhật liên tục khi người dùng sử dụng ứng dụng.
